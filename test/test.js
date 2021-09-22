@@ -1,40 +1,33 @@
-function transform(arr) {
-    if (!Array.isArray(arr)) throw new Error("'arr' parameter must be an instance of the Array!");
-    let result = [];
-    for (let i = 0; i < arr.length; i++) {
-      if (arr[i] == '--discard-next') {
-        result.push(null);
-        i++;
-        continue;
-      }
-      if (arr[i] == '--double-next') {
-        if(arr[i + 1]) {
-          result.push(arr[i + 1]);
-          result.push(arr[i + 1]);
-          i++;          
-        }
-        continue;
-      }
-      if (arr[i] == '--discard-prev') {
-        if (result.length > 0) {
-          result.pop();          
-        }
-        continue;
-      }
-      if (arr[i] == '--double-prev') {
-        if ((result.length > 0) && (result[result.length - 1] != null)) {
-          result.push(result[result.length - 1]);       
-        }
-        continue;
-      }
-      result.push(arr[i]);    
+let chainMaker = {
+  chain: [],
+  getLength() {
+    return this.chain.length;
+  },
+  addLink(value = ' ') {
+    this.chain.push(`(${value})`);
+    return this;
+  },
+  removeLink(position) {
+    if (!this.chain[position - 1]) {
+      throw new Error("You can't remove incorrect link!");
+      this.chain = [];
+      return this;
     }
-
-    let result2 = [];
-    for (let el of result) {
-        if (el != null) result2.push(el);
+    if (position === this.chain.length) {
+      this.chain.pop()
+      return this;
     }
-    return result2;
+    this.chain = this.chain.slice(0, position - 1).concat(this.chain.slice(position));
+    return this;
+  },
+  reverseChain() {
+    this.chain.reverse();
+    return this;
+  },
+  finishChain() {
+    return this.chain.join('~~')
   }
+};
 
-  console.log(transform([1, 2, 3, '--discard-next', 1337, '--double-prev', 4, 5]));
+
+console.log(chainMaker.addLink(1).addLink(2).finishChain());

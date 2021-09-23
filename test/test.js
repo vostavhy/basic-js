@@ -1,17 +1,10 @@
 class DepthCalculator {
-  count = 1;
   calculateDepth(arr) {
-    for (let el of arr) {
-      if (Array.isArray(el)) {
-        this.count++;
-        this.calculateDepth(arr.flat());
-        break;
-      }
-    }
-    return this.count;
+    return 1 + (Array.isArray(arr) ? arr.reduce((max, el) => {
+      return Math.max(max, this.calculateDepth(el));
+    }, 0) : -1);
   }
 }
-
 
 const depthCalculator = new DepthCalculator();
 console.log(depthCalculator.calculateDepth([1, 2, 3, 4, [1, 2, [1, 2, [[[]]]]], 5, [1, [[[[[[]]]]]]]]));

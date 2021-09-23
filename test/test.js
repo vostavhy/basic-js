@@ -1,10 +1,28 @@
-class DepthCalculator {
-  calculateDepth(arr) {
-    return 1 + (Array.isArray(arr) ? arr.reduce((max, el) => {
-      return Math.max(max, this.calculateDepth(el));
-    }, 0) : -1);
+function repeater(str, options = {}) {
+  let repeatTimes = (options['repeatTimes'] === undefined) ? 1 : options['repeatTimes'];
+  let separator = (options['separator'] === undefined) ? '+' : options['separator'];
+  let addition = (options['addition'] === undefined) ? '' : options['addition'];
+  let additionRepeatTimes = (options['additionRepeatTimes'] === undefined) ? 1 : options['additionRepeatTimes'];
+  let additionSeparator = (options['additionSeparator'] === undefined) ? '|' : options['additionSeparator'];
+
+  let resultArr = [];
+  let additionArr = [];
+
+  if (additionRepeatTimes) {
+    for (let i = 0; i < additionRepeatTimes; i++) {
+      additionArr.push(`${addition}`);
+    }
   }
+
+  let additionStr = additionArr.join(`${additionSeparator}`);
+  if (repeatTimes) {
+    for (let i = 0; i < repeatTimes; i++) {
+      resultArr.push(`${str}${additionStr}`);
+    }
+  }
+  let resultStr = resultArr.join(`${separator}`);
+
+  return resultStr;
 }
 
-const depthCalculator = new DepthCalculator();
-console.log(depthCalculator.calculateDepth([1, 2, 3, 4, [1, 2, [1, 2, [[[]]]]], 5, [1, [[[[[[]]]]]]]]));
+console.log(repeater(null, { repeatTimes: 3, separator: '??? ', addition: null, additionRepeatTimes: 3, additionSeparator: '!!!' }));

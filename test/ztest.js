@@ -1,75 +1,38 @@
-class VigenereCipheringMachine {
-  constructor(isDirect = true) {
-    this.isDirect = isDirect;
-    this.alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-  }
+function getCommonCharacterCount(s1, s2) {
+  let obj1 = {};
+  let obj2 = {};
 
-  encrypt(message, key) {
-    message = message.toUpperCase();
-    key = key.toUpperCase();
-    key = this.getLongKey(message, key);
-    let result = '';
-    for (let i = 0; i < message.length; i++) {
-      // если не буква латинского алфавита - просто добавляем символ к строке
-      if (this.alphabet.indexOf(message[i]) === -1) {
-        result += message[i];
-        continue;
-      }
-      result += this.getEncryptedChar(message, key, i)
+  for (let char of s1) {
+    if (s2.indexOf(char) === -1) continue;
+    if (obj1[char] === undefined) {
+      obj1[char] = 1;
+      continue;
     }
-    if (this.isDirect === false) result = result.split('').reverse().join('');
-    return result;
+    obj1[char] += 1;
   }
 
-  decrypt(encryptedMessage, key) {
-    key = key.toUpperCase();
-    key = this.getLongKey(encryptedMessage, key);
-    let result = '';
-    for (let i = 0; i < encryptedMessage.length; i++) {
-      // если не буква латинского алфавита - просто добавляем символ к строке
-      if (this.alphabet.indexOf(encryptedMessage[i]) === -1) {
-        result += encryptedMessage[i];
-        continue;
-      }
-      result += this.getDecryptedChar(encryptedMessage, key, i)
+  for (let char of s2) {
+    if (s1.indexOf(char) === -1) continue;
+    if (obj2[char] === undefined) {
+      obj2[char] = 1;
+      continue;
     }
-
-    if (this.isDirect === false) result = result.split('').reverse().join('');
-    return result;
+    obj2[char] += 1;
   }
 
-  getLongKey(message, key) {
-    let keyIndex = 0;
-    let result = '';
-    for (let i = 0; i < message.length; i++) {
-      if (this.alphabet.indexOf(message[i]) === -1) {
-        result += message[i];
-        continue;
-      }
-      if (keyIndex === key.length) keyIndex = 0;
-      result += key[keyIndex];
-      keyIndex++;
-    }
-    return result;
+  let result = 0;
+
+  for (let key in obj1) {
+    let tempResult = obj1[key] - obj2[key];
+    if ((tempResult === 0) || (tempResult < 0)) tempResult = obj1[key];
+    else tempResult = obj2[key];
+    result += tempResult;
   }
 
-  getEncryptedChar(message, key, index) {
-    let encryptedIndex = this.alphabet.indexOf(message[index]) + this.alphabet.indexOf(key[index]);
-    const encryptedChar = (encryptedIndex <= 25) ? this.alphabet[encryptedIndex] : this.alphabet[encryptedIndex - 26]; 
-    return encryptedChar;
-  }
-
-  getDecryptedChar(encryptedMessage, key, index) {
-    let decryptedIndex = this.alphabet.indexOf(encryptedMessage[index]) - this.alphabet.indexOf(key[index]);
-    const decryptedChar = (decryptedIndex < 0) ? this.alphabet[26 + decryptedIndex] : this.alphabet[decryptedIndex]; 
-    return decryptedChar;
-  }
+  return result;
 }
 
-//const directMachine = new VigenereCipheringMachine();
-//const reverseMachine = new VigenereCipheringMachine(false);
+let s1 = 'aabcc';
+let s2 = 'adcaa';
 
-//console.log(directMachine.encrypt('attack at dawn!', 'alphonse'));
-//console.log(directMachine.decrypt('AEIHQX SX DLLU!', 'alphonse'));
-//console.log(reverseMachine.encrypt('attack at dawn!', 'alphonse'));
-//console.log(reverseMachine.decrypt('AEIHQX SX DLLU!', 'alphonse'));
+console.log(getCommonCharacterCount(s1, s2));
